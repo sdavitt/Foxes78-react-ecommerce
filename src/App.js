@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
+import Navbar from './components/Navbar';
+import Home from './views/Home';
+import Shop from './views/Shop';
+import { Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 
-function App() {
+const App = () => {
+  // define state for my application using useState
+  // const [<state_variable_name>, <setter function>] = useState(<initial_value>);
+  // DO NOT DIRECTLY MUTATE STATE (aka dont directly redefine a state variable)
+  // always use the setter (in this case setStudents) to mutate state -> this will cause a rerender
+  const [students, setStudents] = useState(['Paul', 'Adrian', 'Ethan', 'Vanessa', 'Shaharima']);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar />
+
+      <Routes>
+          <Route children path='/' element={<Home students={students} setStudents={setStudents} />} />
+          <Route children path='/shop' element={<Shop />} />
+      </Routes>
     </div>
   );
 }
