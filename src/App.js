@@ -4,6 +4,7 @@ import Home from './views/Home';
 import Shop from './views/Shop';
 import { Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
+import Cart from './views/Cart';
 
 const App = () => {
   // define state for my application using useState
@@ -26,6 +27,7 @@ const App = () => {
       <Routes>
           <Route children path='/' element={<Home students={students} setStudents={setStudents} />} />
           <Route children path='/shop' element={<Shop cart={cart} setCart={setCart} />} />
+          <Route children path='/cart' element={<Cart cart={cart} setCart={setCart} />}/>
       </Routes>
     </div>
   );

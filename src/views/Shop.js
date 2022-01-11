@@ -22,7 +22,7 @@ const Shop = props => {
     // react will assume any function starting with use is a hook and will therefore treat it differently
     const loadPlayerData = async () => {
         let data = await getPlayerData();
-        console.log(data, typeof data);
+        //console.log(data, typeof data);
         setPlayers(data);
     }
 
