@@ -12,13 +12,20 @@ const App = () => {
   // always use the setter (in this case setStudents) to mutate state -> this will cause a rerender
   const [students, setStudents] = useState(['Paul', 'Adrian', 'Ethan', 'Vanessa', 'Shaharima']);
 
+  // cart state hook -> creation of our initial cart
+  const [cart, setCart] = useState({
+    total: 0,
+    size: 0,
+    items: {}
+  })
+
   return (
     <div className="App">
-      <Navbar />
+      <Navbar cart={cart} />
 
       <Routes>
           <Route children path='/' element={<Home students={students} setStudents={setStudents} />} />
-          <Route children path='/shop' element={<Shop />} />
+          <Route children path='/shop' element={<Shop cart={cart} setCart={setCart} />} />
       </Routes>
     </div>
   );
