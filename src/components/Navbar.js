@@ -8,7 +8,7 @@ const Navbar = props => {
     const auth = useAuth();
 
     // the useEffect() hook runs its callback every time the component is rendered or rerendered (*by default*)
-    useEffect(() => { console.log('Navbar component rendered or rerendered!') });
+    // useEffect(() => { console.log('Navbar component rendered or rerendered!') });
 
     // use the useUser and useSigninCheck hooks to set up the user and usersignedin states
     const { userStatus, data: user } = useUser();

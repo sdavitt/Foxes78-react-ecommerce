@@ -1,10 +1,25 @@
 import React from "react";
 import '../css/customCartStyles.css';
+import { useDatabase, useUser } from 'reactfire';
+import { set, ref } from '@firebase/database';
 
 const Cart = (props) => {
+    // access our user and database -> reactfire hooks
+    const db = useDatabase();
+    const { userStatus, data: user } = useUser();
+
     // different ways to modify cart from here
     // remove all -> clear the entire cart
     const clearCart = () => {
+        // if theres a user, update the user cart
+        if (user){
+            set(ref(db, `carts/${user.uid}`), {
+                total: 0,
+                size: 0,
+                items: {}
+            });
+        }
+        // mutate state cart
         props.setCart({
             total: 0,
             size: 0,
@@ -21,6 +36,10 @@ const Cart = (props) => {
         mutatingCart.total += Number(player.transfer_cost.slice(1, player.transfer_cost.length-1));
         //change quantity
         mutatingCart.items[player.id].quantity++;
+        // update the database with a new cart if there is a user
+        if (user) {
+            set(ref(db, `carts/${user.uid}`), mutatingCart);
+        }
         // mutate state through setCart
         props.setCart(mutatingCart);
     }
@@ -34,6 +53,10 @@ const Cart = (props) => {
         mutatingCart.total -= Number(player.transfer_cost.slice(1, player.transfer_cost.length-1));
         // change the quantity - if the quantity is 1, we want to fully remove this player
         mutatingCart.items[player.id].quantity > 1 ? mutatingCart.items[player.id].quantity-- : delete mutatingCart.items[player.id];
+        // update the database with a new cart if there is a user
+        if (user) {
+            set(ref(db, `carts/${user.uid}`), mutatingCart);
+        }
         // mutate state
         props.setCart(mutatingCart);
     }
@@ -47,6 +70,10 @@ const Cart = (props) => {
         mutatingCart.total -= Number(player.transfer_cost.slice(1, player.transfer_cost.length-1))*mutatingCart.items[player.id].quantity;
         // remove the player from the cart
         delete mutatingCart.items[player.id];
+        // update the database with a new cart if there is a user
+        if (user) {
+            set(ref(db, `carts/${user.uid}`), mutatingCart);
+        }
         // mutate state
         props.setCart(mutatingCart);
     }

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useUser } from 'reactfire';
 
 const Home = props => {
     // data, properties (props), state -> all things that we can use/control over the course of our component's lifecycle
@@ -16,14 +17,17 @@ const Home = props => {
         props.setStudents(newStudents); // update the state and cause a rerender
     }
 
-    // useEffect() hook causes its callback function to run every time the component renders
+    /* // useEffect() hook causes its callback function to run every time the component renders
     useEffect(() => {
         console.log(`Rendered or rerendered Home! Number of students: ${props.students.length}.`);
-    });
+    }); */
+
+    // useUser hook to gain access to our current user
+    const { userStatus, data: user } = useUser();
 
     return (
         <div className='home'>
-            <h1>This will be the homepage.</h1>
+            { user ? <h1>Welcome, {user.displayName}!</h1> : <h1>This will be the homepage.</h1> }
             <div className="container-fluid">
                 <div className="row justify-content-center">
                     <div className="col-6">

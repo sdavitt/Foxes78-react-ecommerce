@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useDatabase, useUser } from "reactfire";
+import { set, ref } from "@firebase/database";
 
 const Shop = props => {
+    // access our user and database -> reactfire hooks
+    const db = useDatabase();
+    const { userStatus, data: user } = useUser();
 
-    useEffect(() => { console.log('Shop component rendered or rerendered!') });
+    //useEffect(() => { console.log('Shop component rendered or rerendered!') });
 
     /* Build an API call in order to get our player data from our API */
     const getPlayerData = async () => {
@@ -47,6 +52,10 @@ const Shop = props => {
                 'player': player,
                 'quantity': 1
             }
+        }
+        // update the database with a new cart if there is a user
+        if (user) {
+            set(ref(db, `carts/${user.uid}`), mutatingCart);
         }
         // mutate state through setCart
         props.setCart(mutatingCart);
