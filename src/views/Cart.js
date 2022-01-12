@@ -11,6 +11,7 @@ const Cart = (props) => {
             items: {}
         })
     }
+
     // plus button -> increase quantity by one
     const increaseQuantity = (player) => {
         let mutatingCart = {...props.cart}

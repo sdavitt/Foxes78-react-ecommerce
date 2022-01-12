@@ -18,7 +18,7 @@ const App = () => {
     total: 0,
     size: 0,
     items: {}
-  })
+  });
 
   return (
     <div className="App">
