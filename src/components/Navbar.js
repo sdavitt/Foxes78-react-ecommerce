@@ -1,5 +1,4 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from '@firebase/auth';
-import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth, useUser, useSigninCheck } from 'reactfire';
 
@@ -11,8 +10,8 @@ const Navbar = props => {
     // useEffect(() => { console.log('Navbar component rendered or rerendered!') });
 
     // use the useUser and useSigninCheck hooks to set up the user and usersignedin states
-    const { userStatus, data: user } = useUser();
-    const { signinStatus, data: signinCheckResult } = useSigninCheck();
+    const { data: user } = useUser();
+    const { signinStatus } = useSigninCheck();
 
     const signin = async () => {
         let provider = new GoogleAuthProvider();
@@ -25,7 +24,6 @@ const Navbar = props => {
     }
 
     return (
-
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <Link className="navbar-brand" to="/">Foxes78 | React</Link>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">

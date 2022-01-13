@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useDatabase, useUser } from "reactfire";
 import { set, ref } from "@firebase/database";
@@ -6,7 +6,7 @@ import { set, ref } from "@firebase/database";
 const Shop = props => {
     // access our user and database -> reactfire hooks
     const db = useDatabase();
-    const { userStatus, data: user } = useUser();
+    const { data: user } = useUser();
 
     //useEffect(() => { console.log('Shop component rendered or rerendered!') });
 
@@ -44,6 +44,7 @@ const Shop = props => {
         mutatingCart.total += Number(player.transfer_cost.slice(1, player.transfer_cost.length-1));
         // check if the player is already in the cart
         // if so, change quantity
+        console.log(mutatingCart);
         // if not, add player to cart with quantity one
         if (mutatingCart.items[player.id]){
             mutatingCart.items[player.id].quantity++;

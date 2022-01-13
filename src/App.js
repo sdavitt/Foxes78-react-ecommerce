@@ -7,10 +7,12 @@ import { useEffect, useState } from 'react';
 import { useDatabase, useUser } from 'reactfire';
 import Cart from './views/Cart';
 import { get, child, ref } from '@firebase/database';
+import Checkout from './views/Checkout';
+import PaymentConfirmation from './components/PaymentConfirmation';
 
 const App = () => {
   const db = useDatabase();
-  const { userStatus, data: user } = useUser();
+  const { data: user } = useUser();
 
   // define state for my application using useState
   // const [<state_variable_name>, <setter function>] = useState(<initial_value>);
@@ -35,7 +37,12 @@ const App = () => {
       get(child(ref(db), `carts/${user.uid}`)).then((snapshot) => {
         if (snapshot.exists()) {
           console.log(snapshot.val()); // instead of just console logging the snapshot's value -> let's set the cart state
-          setCart(snapshot.val());
+          let dbcart = snapshot.val();
+          // we need to make sure that cart.items exists
+          if (!dbcart['items']){
+            dbcart['items'] = {};
+          }
+          setCart(dbcart);
         } else {
           console.log("No data available");
         }
@@ -46,7 +53,6 @@ const App = () => {
     }
   }, [user]);
   
-
   return (
     <div className="App">
       <Navbar cart={cart} />
@@ -55,6 +61,8 @@ const App = () => {
           <Route children path='/' element={<Home students={students} setStudents={setStudents} />} />
           <Route children path='/shop' element={<Shop cart={cart} setCart={setCart} />} />
           <Route children path='/cart' element={<Cart cart={cart} setCart={setCart} />}/>
+          <Route children path='/checkout' element={<Checkout cart={cart} setCart={setCart}/>}/>
+          <Route children path='/confirmation' element={<PaymentConfirmation cart={cart} setCart={setCart}/>}/>
       </Routes>
     </div>
   );

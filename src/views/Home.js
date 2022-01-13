@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { useUser } from 'reactfire';
 
 const Home = props => {
@@ -23,7 +22,7 @@ const Home = props => {
     }); */
 
     // useUser hook to gain access to our current user
-    const { userStatus, data: user } = useUser();
+    const { data: user } = useUser();
 
     return (
         <div className='home'>

@@ -1,12 +1,12 @@
-import React from "react";
 import '../css/customCartStyles.css';
 import { useDatabase, useUser } from 'reactfire';
 import { set, ref } from '@firebase/database';
+import { Link } from 'react-router-dom';
 
 const Cart = (props) => {
     // access our user and database -> reactfire hooks
     const db = useDatabase();
-    const { userStatus, data: user } = useUser();
+    const { data: user } = useUser();
 
     // different ways to modify cart from here
     // remove all -> clear the entire cart
@@ -117,7 +117,7 @@ const Cart = (props) => {
                         </div>
                         <div className="d-flex align-items-center"><button className="btn btn-sm btn-danger" onClick={clearCart}>Remove All</button></div>
                     </div>
-                    <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><a href="/" className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Proceed to Pay</a></div>
+                    <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><Link to="/checkout" className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Proceed to Pay</Link></div>
                 </div>
             </div>
         </div>
