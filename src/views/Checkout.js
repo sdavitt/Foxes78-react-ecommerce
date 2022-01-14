@@ -14,10 +14,14 @@ const Checkout = props => {
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
         console.log(user);
+        let udata = 'guest';
+        if (user){
+            udata = user;
+        }
         fetch("http://127.0.0.1:5000/payments/create-payment-intent", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify([props.cart, user]), // modify the body to have my cart -> and the user?
+            body: JSON.stringify([props.cart, udata]), // modify the body to have my cart -> and the user?
         })
             .then((res) => res.json())
             .then((data) => setClientSecret(data.clientSecret))

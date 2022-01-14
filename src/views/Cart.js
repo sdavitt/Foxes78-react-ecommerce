@@ -1,18 +1,30 @@
 import '../css/customCartStyles.css';
-import { useDatabase, useUser } from 'reactfire';
+import { useContext } from 'react';
+import { useDatabase, useUser, useAuth } from 'reactfire';
 import { set, ref } from '@firebase/database';
+import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
 import { Link } from 'react-router-dom';
+import { DataContext } from '../context/DataProvider';
 
 const Cart = (props) => {
     // access our user and database -> reactfire hooks
     const db = useDatabase();
     const { data: user } = useUser();
+    const auth = useAuth();
+    const {setCheckoutSignIn} = useContext(DataContext);
+
+    const signin = async () => {
+        setCheckoutSignIn(true);
+        let provider = new GoogleAuthProvider();
+        let x = await signInWithPopup(auth, provider);
+        return x
+    }
 
     // different ways to modify cart from here
     // remove all -> clear the entire cart
     const clearCart = () => {
         // if theres a user, update the user cart
-        if (user){
+        if (user) {
             set(ref(db, `carts/${user.uid}`), {
                 total: 0,
                 size: 0,
@@ -29,11 +41,11 @@ const Cart = (props) => {
 
     // plus button -> increase quantity by one
     const increaseQuantity = (player) => {
-        let mutatingCart = {...props.cart}
+        let mutatingCart = { ...props.cart }
         // increase the size of the cart
         mutatingCart.size++;
         // increase the total in the cart
-        mutatingCart.total += Number(player.transfer_cost.slice(1, player.transfer_cost.length-1));
+        mutatingCart.total += Number(player.transfer_cost.slice(1, player.transfer_cost.length - 1));
         //change quantity
         mutatingCart.items[player.id].quantity++;
         // update the database with a new cart if there is a user
@@ -46,11 +58,11 @@ const Cart = (props) => {
 
     // minus button - decrease the quantity by one or remove the player if the quantity is one
     const decreaseQuantity = (player) => {
-        let mutatingCart = {...props.cart};
+        let mutatingCart = { ...props.cart };
         // decrease the size of the cart
         mutatingCart.size--;
         // decrease the total in the cart
-        mutatingCart.total -= Number(player.transfer_cost.slice(1, player.transfer_cost.length-1));
+        mutatingCart.total -= Number(player.transfer_cost.slice(1, player.transfer_cost.length - 1));
         // change the quantity - if the quantity is 1, we want to fully remove this player
         mutatingCart.items[player.id].quantity > 1 ? mutatingCart.items[player.id].quantity-- : delete mutatingCart.items[player.id];
         // update the database with a new cart if there is a user
@@ -63,11 +75,11 @@ const Cart = (props) => {
 
     // trash can -> remove all of a player
     const removePlayer = (player) => {
-        let mutatingCart = {...props.cart};
+        let mutatingCart = { ...props.cart };
         // decrease cart size by quantity of player
         mutatingCart.size -= mutatingCart.items[player.id].quantity;
         // decrease cart total by cost of player * quantity of player
-        mutatingCart.total -= Number(player.transfer_cost.slice(1, player.transfer_cost.length-1))*mutatingCart.items[player.id].quantity;
+        mutatingCart.total -= Number(player.transfer_cost.slice(1, player.transfer_cost.length - 1)) * mutatingCart.items[player.id].quantity;
         // remove the player from the cart
         delete mutatingCart.items[player.id];
         // update the database with a new cart if there is a user
@@ -117,7 +129,14 @@ const Cart = (props) => {
                         </div>
                         <div className="d-flex align-items-center"><button className="btn btn-sm btn-danger" onClick={clearCart}>Remove All</button></div>
                     </div>
-                    <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><Link to="/checkout" className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Proceed to Pay</Link></div>
+                    {user ?
+                        <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><Link to="/checkout" className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Proceed to Pay</Link></div>
+                        :
+                        <>
+                            <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><Link to="/checkout" className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">Checkout as guest</Link></div>
+                            <div className="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><button className="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button" onClick={signin}>Sign-in to checkout</button></div>
+                        </>
+                    }
                 </div>
             </div>
         </div>

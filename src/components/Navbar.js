@@ -1,10 +1,13 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from '@firebase/auth';
 import { Link } from 'react-router-dom';
 import { useAuth, useUser, useSigninCheck } from 'reactfire';
+import { DataContext } from '../context/DataProvider';
+import { useContext } from 'react';
 
 const Navbar = props => {
     // enable out navbar component to use our auth system
     const auth = useAuth();
+    const {setCheckoutSignIn} = useContext(DataContext);
 
     // the useEffect() hook runs its callback every time the component is rendered or rerendered (*by default*)
     // useEffect(() => { console.log('Navbar component rendered or rerendered!') });
@@ -20,7 +23,8 @@ const Navbar = props => {
     }
 
     const signout = async () => {
-        await signOut(auth).then(() => console.log('signed out user'))
+        setCheckoutSignIn(false);
+        await signOut(auth).then(() => console.log('signed out user'));
     }
 
     return (

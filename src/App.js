@@ -3,16 +3,18 @@ import Navbar from './components/Navbar';
 import Home from './views/Home';
 import Shop from './views/Shop';
 import { Routes, Route } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useDatabase, useUser } from 'reactfire';
 import Cart from './views/Cart';
-import { get, child, ref } from '@firebase/database';
+import { get, child, ref, set } from '@firebase/database';
 import Checkout from './views/Checkout';
 import PaymentConfirmation from './components/PaymentConfirmation';
+import { DataContext } from './context/DataProvider';
 
 const App = () => {
   const db = useDatabase();
   const { data: user } = useUser();
+  const { checkoutSignIn } = useContext(DataContext);
 
   // define state for my application using useState
   // const [<state_variable_name>, <setter function>] = useState(<initial_value>);
@@ -28,18 +30,23 @@ const App = () => {
   });
 
   // we have a situational check that we want to do -> if there is a change in user status, (aka a sign-in or a sign-out)
-    // we then want to compare the current cart to the database cart (aka if a user signs in, grab their old cart from the db)
-    // if a user signs out, do nothing
+  // we then want to compare the current cart to the database cart (aka if a user signs in, grab their old cart from the db)
+  // if a user signs out, do nothing
   // useEffect hook with 2nd parameter [user] aka run the effect when there is change in the user object
   useEffect(() => {
-    if (user) { // if there is a user logged in, check the db for a cart belonging to this user, then do some stuff to make the local state cart match that db cart
+    if (checkoutSignIn) {
+      if (user) {
+        set(ref(db, `carts/${user.uid}`), cart);
+      }
+    }
+    else if (user) { // if there is a user logged in, check the db for a cart belonging to this user, then do some stuff to make the local state cart match that db cart
       // how do we Read our database? so far we've only written to it -> back to documentation!
       get(child(ref(db), `carts/${user.uid}`)).then((snapshot) => {
         if (snapshot.exists()) {
           console.log(snapshot.val()); // instead of just console logging the snapshot's value -> let's set the cart state
           let dbcart = snapshot.val();
           // we need to make sure that cart.items exists
-          if (!dbcart['items']){
+          if (!dbcart['items']) {
             dbcart['items'] = {};
           }
           setCart(dbcart);
@@ -52,17 +59,17 @@ const App = () => {
       })
     }
   }, [user]);
-  
+
   return (
     <div className="App">
       <Navbar cart={cart} />
 
       <Routes>
-          <Route children path='/' element={<Home students={students} setStudents={setStudents} />} />
-          <Route children path='/shop' element={<Shop cart={cart} setCart={setCart} />} />
-          <Route children path='/cart' element={<Cart cart={cart} setCart={setCart} />}/>
-          <Route children path='/checkout' element={<Checkout cart={cart} setCart={setCart}/>}/>
-          <Route children path='/confirmation' element={<PaymentConfirmation cart={cart} setCart={setCart}/>}/>
+        <Route children path='/' element={<Home students={students} setStudents={setStudents} />} />
+        <Route children path='/shop' element={<Shop cart={cart} setCart={setCart} />} />
+        <Route children path='/cart' element={<Cart cart={cart} setCart={setCart} />} />
+        <Route children path='/checkout' element={<Checkout cart={cart} setCart={setCart} />} />
+        <Route children path='/confirmation' element={<PaymentConfirmation cart={cart} setCart={setCart} />} />
       </Routes>
     </div>
   );
