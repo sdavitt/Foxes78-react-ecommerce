@@ -18,7 +18,7 @@ const Checkout = props => {
         if (user){
             udata = user;
         }
-        fetch("http://127.0.0.1:5000/payments/create-payment-intent", {
+        fetch("https://foxes78api.herokuapp.com/payments/create-payment-intent", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify([props.cart, udata]), // modify the body to have my cart -> and the user?
